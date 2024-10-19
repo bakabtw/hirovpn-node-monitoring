@@ -20,13 +20,20 @@ def check_server_load():
     # Check Disk usage at /
     disk = psutil.disk_usage('/')
     disk_usage = disk.percent
+    
+    # Check network load
+    net1 = psutil.net_io_counters()
+    time.sleep(1)  # Wait for 1 second to measure network usage difference
+    net2 = psutil.net_io_counters()
+
+    network_load = round((net2.bytes_sent - net1.bytes_sent) / 1024 / 1024, 1)
 
     return {
         "cpu": cpu_usage,
         "ram": ram_usage,
-        "disk": disk_usage
+        "disk": disk_usage,
+        "network": network_load
     }
-    
 
 def send_metrics(data):
     try:
